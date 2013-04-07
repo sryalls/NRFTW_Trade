@@ -1,0 +1,22 @@
+OVERVIEW
+
+This repository is for the ongoing development of the NRFTW trade system. NRFTW (No Rest For The Wicked) is a LARP set in the Warhammer 40,000 universe based on the Rogue Trader RPG. 
+
+The purpose of this project is to provide software to support a trade system for this game. It attempts to create a crude supply/demand based economic model which provides a stable, immersive trading environment for the players of the game and emmergent outcomes for the game world. 
+
+This project started in the Autum of 2012 and is ongoing. 
+
+The code base currently in this repository is to be considerrd a first draft in progress. 
+
+CODE
+The system is being written in Java and Mysql. 
+
+Currently it is driven by a command line, menu driven interface. Adaption to utilize a more user friendly interface is a probable future enhancement. 
+
+Some attempt has been made to conform to an MVC architecture. Currently the line between the Controler and the View is very fuzzy. This is sub optimal and to be rectified before any attempt at a nicer interface is made. 
+
+The NRFTW_Trade.java file contains the procedural code of the program, user interface functionality and DB interface functionality. 
+
+MenuSelection.java is currently redundant but may be refisited in future. 
+
+The rest of the java files in this repository contain the class files that make up the Model. 
