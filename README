@@ -20,3 +20,7 @@ The NRFTW_Trade.java file contains the procedural code of the program, user inte
 MenuSelection.java is currently redundant but may be refisited in future. 
 
 The rest of the java files in this repository contain the class files that make up the Model. 
+
+DATABASE
+
+a dump of the database can be foud in nrftw_trade_DB.sql.  Config for database interaction can be found in the methods dBUpdate and dBQuery.
