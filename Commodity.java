@@ -24,7 +24,9 @@ public class Commodity {
         theName = aName;
         setupTags();
     }
-    
+    /**
+     * Prints the name and grade of the tag relating to this commodity.
+     */
     private void displayTags(){
         for(Iterator<Tag> aTag = this.theTags.iterator(); aTag.hasNext();){
             Tag item = aTag.next();
@@ -34,6 +36,9 @@ public class Commodity {
         
     }
     
+    /**
+     * Sets up the array list of tags relating to this commodity
+     */
     private void setupTags(){
         ArrayList someTags = new ArrayList();
         if(theName != null){

@@ -21,6 +21,13 @@ public class TradeRoute {
     
     }
     
+    /**
+     * Constructor - When only an id  is passed to the TradeRoute constructor 
+     * the database is queried for details of a trade route with that id. If one 
+     * is found then it's details are popultated to the new TradeRoute object.
+     * 
+     * @param anId - the Id of the existing route to be found
+     */
     TradeRoute(int anId){
         //query database for an existing trade route with the passed ID
         String routeQuery = "select market_1, market_2, id from trade_routes where id = "+anId;
@@ -40,12 +47,27 @@ public class TradeRoute {
             //do nothing
     }
     
+    /**
+     * When a start point, end point and id are passed to the constructor a new 
+     * TradeRoute object is created with those details set to it's approptiate 
+     * attributes. 
+     * 
+     * @param aStartPoint - a start point
+     * @param anEndPoint - an end point
+     * @param anId - an id
+     */
     TradeRoute(String aStartPoint, String anEndPoint, int anId){
         startPoint = aStartPoint;
         endPoint = anEndPoint;
         id = anId;
     }
     
+    /**
+     * Updates the database so that each commodity relating to the trage route has the passed capacity
+     * 
+     * @param theCommodities - an array list containing all commodities in the system
+     * @param aCapacity - the capcity all commodities on the route are to be set to. 
+     */
     public void setRouteCapacaties(ArrayList theCommodities, int aCapacity){    
         //construct sql query
         String theCapacityEnquiery = "select commodity from route_capacity where route = "+id+";";
