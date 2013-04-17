@@ -484,6 +484,14 @@ public class NRFTW_Trade {
         return theSelections;
     }
     
+    /**
+     * Interrogates the user for the start and end point of a trade route and, 
+     * if this route does not already exit, creates the route in the database 
+     * and sets the trade capactities for the commodities on the route.
+     * 
+     * @param theMarkets - an array list of all the markets in the system
+     * @param theCommodities - an array list of all the commodities in the system
+     */
     public static void addTradeRoute(ArrayList theMarkets, ArrayList theCommodities){
         String theStartSelection = "";
         String theEndSelection = "";
@@ -517,6 +525,13 @@ public class NRFTW_Trade {
  
     } 
     
+    /**
+     * interrogates the user for a capacity for the passed trade route and 
+     * applies that capacity to that route for all the existing commodities. 
+     * 
+     * @param theTradeRoute -  a TradeRoute object to the capacities relating to it set in the database.
+     * @param theCommodities - an array list of all the commodities in the system
+     */
     public static void setRouteCapacity(TradeRoute theTradeRoute, ArrayList theCommodities){
             //get route capacity;
             System.out.println("What is the per commodity capacity for this route?");
@@ -536,6 +551,14 @@ public class NRFTW_Trade {
         theTradeRoute.setRouteCapacaties(theCommodities,theCapacity);
     }
     
+    /**
+     * runs through all markets in the passed array and applies the function to 
+     * set production and consumption levels to them
+     * 
+     * @param theMarkets - an array list of all the markets in the system
+     * @param theCommodities - an array list of all the commodities in the system
+     * @param theTags  - an array list of all the tags in the system
+     */
     public static void setLevelsAll(ArrayList theMarkets,ArrayList theCommodities, ArrayList theTags){
     //for each market
       for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){  
@@ -546,6 +569,14 @@ public class NRFTW_Trade {
       }
     }
     
+    /**
+     * Displays the list of markets to the user and applies the function to set
+     * it's production and consumption rates to a market selected from that list.
+     * 
+     * @param theMarkets - an array list of all the markets in the system
+     * @param theCommodities - an array list of all the commodities in the system
+     * @param theTags  - an array list of all the tags in the system 
+     */
     public static void setLevelsOne(ArrayList theMarkets,ArrayList theCommodities, ArrayList theTags){
            System.out.println("The markets are: ");
            for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){
@@ -575,6 +606,15 @@ public class NRFTW_Trade {
            }while(selectionMade == false);
     }
     
+    /**
+     * interrogates the user for production rates for each commodity and 
+     * consumption rates for each tag as to be applied to the passed Market and 
+     * applies them to said Market.
+     * 
+     * @param theMarket - a Market object which is to have it's production and consumption rates set
+     * @param theCommodities - an array list of all the commodities in the system
+     * @param theTags  - an array list of all the tags in the system
+     */
     public static void setLevels(Market theMarket, ArrayList theCommodities, ArrayList theTags){
          //go through the commodities
         // set up key value pair (tag => consumption rate)
@@ -695,6 +735,11 @@ public class NRFTW_Trade {
         dBUpdate(levelsQuery);
    }
     
+    /**
+     * Interrogates the database for tag data and returns it in an ArrayList 
+     * containing all Tags in the system
+     * @return - Arraylist - contains a Tag object for each tag in the databse. 
+     */
     private static ArrayList getTags(){
         ArrayList someTags = new ArrayList();
         //set tags query 
@@ -721,6 +766,10 @@ public class NRFTW_Trade {
     return someTags;
     }
     
+    /**
+     * executes a database query that doesn't expect a response. 
+     * @param query - The query to be executed on the database.
+     */
     public static void dBUpdate(String query){
         String url = "jdbc:mysql://localhost/NRFTW_trade";
         String user = "root";
@@ -753,7 +802,11 @@ public class NRFTW_Trade {
         }    
     }
     
-    
+    /**
+     * executes a database query that does expect a response.
+     * @param query - The query to be executed on the database.
+     * @return ResultSet - the results returned from the database in response to the query
+     */
     public static ResultSet dBQuery(String query){
         
     String url = "jdbc:mysql://localhost/NRFTW_trade";
@@ -793,7 +846,11 @@ public class NRFTW_Trade {
         return rs;    
     }
     
-    
+    /**
+     * Returns an arraylist of the commodities in the system
+     * 
+     * @return ArrayList - Contains a Commodity object representing each commodity in the database 
+     */
     private static ArrayList setupCommodities(){
         ArrayList theCommodities = new ArrayList();
         //setup query to get commodity names
@@ -819,6 +876,11 @@ public class NRFTW_Trade {
         return theCommodities;
     }
     
+    /**
+     * Returns an arraylist of the markets in the system
+     * 
+     * @return ArrayList - Contains a Market object representing each market in the database 
+     */
     private static ArrayList setupMarkets(){
         ArrayList theMarkets = new ArrayList();
         String query = "SELECT name from markets";
