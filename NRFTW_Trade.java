@@ -86,10 +86,59 @@ public class NRFTW_Trade {
                     selectionMade = true;
                     viewPricesAll(theMarkets);
                     break;
-                         
-                    
+                 case 11:
+                    selectionMade = true;
+                    setPrices(theMarkets,theCommodities);
+                    break;
+                 case 12:
+                    selectionMade = true;
+                    setPricesAll(theMarkets,theCommodities);
+                    break;
             }
         }while(theSelection != 0);
+    }
+    
+    /**
+     * interrogates the user for the name of a market and sets price for the commodities in that market
+     * 
+     * @param theMarkets
+     * @param theCommodities 
+     */
+    public static void setPrices(ArrayList theMarkets, ArrayList theCommodities){
+        ArrayList theMarketNames = printMarkets(theMarkets);
+        System.out.println("which market would you like to set prices for");
+        String theStartSelection = "";
+        do{
+            try{    
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader br = new BufferedReader(isr);
+                theStartSelection = br.readLine();
+            }catch(Exception e){
+            }
+            if(!theMarketNames.contains(theStartSelection)){
+                System.out.println("No market with the name "+theStartSelection+"exists");
+            }
+        }while(!theMarketNames.contains(theStartSelection));
+        for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){  
+        //get the market
+            Market aMarket = aMarketItterator.next();
+            if(aMarket.theName.equals(theStartSelection)){
+                aMarket.setPrices(theCommodities);
+            }
+         }
+    }
+    
+    /**
+     * sets the price for all commodities in all markets
+     * @param theMarkets
+     * @param theCommodities 
+     */
+    public static void setPricesAll(ArrayList theMarkets, ArrayList theCommodities){
+         for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){  
+        //get the market
+            Market aMarket = aMarketItterator.next();
+            aMarket.setPrices(theCommodities);
+         }    
     }
     
     /**
@@ -350,11 +399,7 @@ public class NRFTW_Trade {
      */
     public static int printMenu(){
         //@todo - funtionality for:
-        
-        // set prices
-            //all markets
-            //specific market
-        
+
         // add commodity
             //to system
             //to given market
@@ -363,8 +408,7 @@ public class NRFTW_Trade {
         // remove commodity from system
         // alter consumption rate
         // alter produciton rate 
-       
-         
+                
         int theSelection = 99;
         System.out.println("Please make a selection:");
         System.out.println("Press 1 to run a cycle");
@@ -384,6 +428,10 @@ public class NRFTW_Trade {
         System.out.println("Press 9 to see prices in a market");
         // view pricess all
         System.out.println("Press 10 to see prices in all markets");
+        // set prices - specific market
+        System.out.println("Press 11 to set prices in a markets");
+        // set prices - all markets
+        System.out.println("Press 12 to set prices in all markets");
         System.out.println("Press 0 to exit");
         try{    
             InputStreamReader isr = new InputStreamReader(System.in);

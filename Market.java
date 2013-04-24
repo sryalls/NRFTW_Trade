@@ -5,6 +5,7 @@
 package nrftw_trade;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,6 +20,13 @@ public class Market {
         theName = aName;
     }
     
+    public void setPrices(ArrayList theCommodities){
+    
+    }
+    
+    /**
+     * interrogats the database for price data relating to this market and prints it to screen
+     */
     public void displayPrices(){
         System.out.println(theName+":");
         //build query to get price data
