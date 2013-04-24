@@ -78,9 +78,61 @@ public class NRFTW_Trade {
                     selectionMade = true;
                     removeTradeRoute(theMarkets);
                     break;
+                case 9:
+                    selectionMade = true;
+                    viewPrices(theMarkets);
+                    break;
+                case 10:
+                    selectionMade = true;
+                    viewPricesAll(theMarkets);
+                    break;
+                         
                     
             }
         }while(theSelection != 0);
+    }
+    
+    /**
+     * interrogates the user for the name of a market and displays the prices for all commodities traded in that market
+     * @param theMarkets 
+     */
+    public static void viewPrices(ArrayList theMarkets){
+        ArrayList theMarketNames = printMarkets(theMarkets);
+        System.out.println("which market would you like to view prices for");
+        String theStartSelection = "";
+        do{
+            try{    
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader br = new BufferedReader(isr);
+                theStartSelection = br.readLine();
+            }catch(Exception e){
+            }
+            if(!theMarketNames.contains(theStartSelection)){
+                System.out.println("No market with the name "+theStartSelection+"exists");
+            }
+        }while(!theMarketNames.contains(theStartSelection));
+        for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){  
+        //get the market
+            Market aMarket = aMarketItterator.next();
+            if(aMarket.theName.equals(theStartSelection)){
+                aMarket.displayPrices();
+            }
+         }
+        
+    }
+    
+    /**
+     * Displays the prices for all commodities traded in all markets
+     * 
+     * @param theMarkets 
+     */
+    public static void viewPricesAll(ArrayList theMarkets){
+         for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){  
+        //get the market
+            Market aMarket = aMarketItterator.next();
+            aMarket.displayPrices();
+         }
+    
     }
     
     /**
@@ -311,8 +363,8 @@ public class NRFTW_Trade {
         // remove commodity from system
         // alter consumption rate
         // alter produciton rate 
-        // view prices
-        // view pricess all 
+       
+         
         int theSelection = 99;
         System.out.println("Please make a selection:");
         System.out.println("Press 1 to run a cycle");
@@ -328,6 +380,10 @@ public class NRFTW_Trade {
         System.out.println("Press 7 to add a market");
         // remove trade route
         System.out.println("Press 8 to remove a trade route");
+         // view prices
+        System.out.println("Press 9 to see prices in a market");
+        // view pricess all
+        System.out.println("Press 10 to see prices in all markets");
         System.out.println("Press 0 to exit");
         try{    
             InputStreamReader isr = new InputStreamReader(System.in);
@@ -338,6 +394,8 @@ public class NRFTW_Trade {
         }
     return  theSelection;
     }
+    
+    
     
     /**
      * prints out the names of all the markets and returns an array list of all 
