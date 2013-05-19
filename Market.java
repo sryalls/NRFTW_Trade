@@ -37,6 +37,7 @@ public class Market {
             System.out.println(ex);
         }        
         String setPriceQueries = "";
+        String insertPriceQuery = "";
         // itterate through the passed commodities
         for(Iterator<Commodity> newPricesItterator = theCommodities.iterator(); newPricesItterator.hasNext();){
             Commodity thisCommodity = newPricesItterator.next();
@@ -52,17 +53,28 @@ public class Market {
                 }catch(Exception e){                   
                 } 
             }while(thePrice < 0);
-            //if array list of retrieved commodities contains the current commodity
+            //if array list of retrieved commodities contains the current commodity            
             if(existingPrices.contains(thisCommodity.theName)){
                 //add an update query to the query string
                 setPriceQueries += "update prices set price = '"+thePrice+"' where market = '"+theName+"' and commodity = '"+thisCommodity.theName+"'; ";
+                NRFTW_Trade.dBUpdate(setPriceQueries);
+                setPriceQueries = "";
             //else
             }else{
                 //add an insert query to the query string
+                if(insertPriceQuery.equals("")){
+                    insertPriceQuery = "Insert into prices (market, price, commodity) Values ('"+theName+"','"+thePrice+"','"+thisCommodity.theName+"')";
+                } else{
+                insertPriceQuery += ", ('"+theName+"','"+thePrice+"','"+thisCommodity.theName+"')";
+                }
                 
             }                        
+        } 
+        if (!insertPriceQuery.equals("")){
+            insertPriceQuery += ";";
         }
         //execute the query string
+        NRFTW_Trade.dBUpdate(insertPriceQuery);
     }
     
     /**
