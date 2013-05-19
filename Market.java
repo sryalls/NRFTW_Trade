@@ -87,7 +87,7 @@ public class Market {
     public void displayPrices(){
         System.out.println(theName+":");
         //build query to get price data
-        String priceQuery = "select commodity, price from prices where market = 'theName' order by commodity asc";
+        String priceQuery = "select commodity, price from prices where market = '"+theName+"' order by commodity asc";
         //execute query
         ResultSet results = NRFTW_Trade.dBQuery(priceQuery);
         try{
