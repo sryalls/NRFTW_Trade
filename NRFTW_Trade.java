@@ -100,8 +100,8 @@ public class NRFTW_Trade {
     /**
      * interrogates the user for the name of a market and sets price for the commodities in that market
      * 
-     * @param theMarkets
-     * @param theCommodities 
+     * @param ArrayList theMarkets - an array list of all the markets in the system
+     * @param ArrayList theCommodities - an array list of all the commodities in the system
      */
     public static void setPrices(ArrayList theMarkets, ArrayList theCommodities){
         ArrayList theMarketNames = printMarkets(theMarkets);
@@ -129,8 +129,8 @@ public class NRFTW_Trade {
     
     /**
      * sets the price for all commodities in all markets
-     * @param theMarkets
-     * @param theCommodities 
+     * @param ArrayList theMarkets - - an array list of all the markets in the system
+     * @param ArrayList theCommodities  - - an array list of all the commodities in the system
      */
     public static void setPricesAll(ArrayList theMarkets, ArrayList theCommodities){
          for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){  

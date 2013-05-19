@@ -23,6 +23,10 @@ public class Market {
         theName = aName;
     }
     
+   /**
+     * Interrogats the user for the new prices for the commodities and writes them to the database
+     * @param ArrayList theCommodities - an array list of all the commodities in the system
+     */ 
     public void setPrices(ArrayList theCommodities){
         // get list of commodites with prices for this market from the DB
         String getCommoditiesQuery = "select commodity from prices where market = '"+theName+"'";
