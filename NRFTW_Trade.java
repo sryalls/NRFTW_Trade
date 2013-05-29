@@ -46,7 +46,7 @@ public class NRFTW_Trade {
                 case 1:
                     TradeCycle theTradeCycle = new TradeCycle();
                     //run trade cycle
-                    theTradeCycle.run(theMarkets,theCommodities);
+                    theTradeCycle.run(theMarkets,theCommodities,theTags);
                     selectionMade = true;
                     break;
                 case 2:

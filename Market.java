@@ -94,12 +94,12 @@ public class Market {
             while(results.next()){
                 String aCommodityName = results.getString(1);
                 int aPrice = results.getInt(2);
+                //display data
                 System.out.println(aCommodityName+"\t\t"+aPrice);
             
             }
         }catch(SQLException ex){
             System.out.println(ex);
         }
-        //display data
     }
 }
