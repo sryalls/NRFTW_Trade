@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  *
  * @author sandy
@@ -88,24 +91,29 @@ public class TradeCycle {
 		
 		//get each comodity
                     //include any of a higher tag
-                String commodityQuery = "select commodity_name, stock from trade_matrix where commodity_name in (select commodity from commodities_tags where tag = '"+aTag.theName+"' and grade >= "+aTag.theGrade+")";
+                String commodityQuery = "select trade_matrix.commodity_name, trade_matrix.stock, prices.price from trade_matrix inner join prices on trade_matrix.commodity_name = prices.commodity and trade_matrix.market_name = prices.market where trade_matrix.commodity_name in (select commodity from commodities_tags where tag = '"+aTag.theName+"' and grade >= "+aTag.theGrade+") and trade_matrix.market_name = '"+aMarket.theName+"' order by price asc";
                 ResultSet commodityResults = NRFTW_Trade.dBQuery(commodityQuery);
                 try{
+                    ArrayList theConsumedCommodities = new ArrayList();
                     while(commodityResults.next()){
-                                               
-                    }
+                        String thisCommodityName = commodityResults.getString(1);
+                        int thisCommodityStock = commodityResults.getInt(2);
+                        int thisCommodityPrice = commodityResults.getInt(3);
+                        Commodity thisCommodity = new Commodity(thisCommodityName,thisCommodityStock,thisCommodityPrice);
+                        theConsumedCommodities.add(thisCommodity);
+                    }                                                                  
                 }catch(SQLException ex){
                     System.out.println(ex);
                 } 
-		//rank by local price
-		//loop until consumption rate is satisfied
-                    //for each commodity 
-                    //if commodity has stockpile
-                        //..consume unit of that commodity
-			//adjust price of commodity
-			//add one to consumption rate satisfaction
-			//to next commodity
-                    //close commodity loop
+        		//rank by local price
+                	//loop until consumption rate is satisfied
+                            //for each commodity 
+                                //if commodity has stockpile
+                                    //..consume unit of that commodity
+                                //adjust price of commodity
+                            //add one to consumption rate satisfaction
+                            //to next commodity
+                    //close commodity loop 
             //close tag loop
             }
         //close market loop 

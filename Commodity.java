@@ -15,6 +15,8 @@ import java.sql.SQLException;
 public class Commodity {
     public ArrayList theTags;
     public String theName;
+    public int theStockLevel;
+    public int thePrice;
     
     Commodity(){
     
@@ -22,6 +24,14 @@ public class Commodity {
     
     Commodity(String aName){
         theName = aName;
+        setupTags();
+    }
+    
+    Commodity(String aName, int aStock, int aPrice){
+        theName = aName;
+        theStockLevel = aStock;
+        thePrice = aPrice;
+        
         setupTags();
     }
     /**
