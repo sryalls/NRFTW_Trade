@@ -12,7 +12,7 @@ import java.sql.SQLException;
  *
  * @author sandy
  */
-public class Commodity {
+public class Commodity implements Comparable{
     public ArrayList theTags;
     public String theName;
     public int theStockLevel;
@@ -78,4 +78,10 @@ public class Commodity {
         theTags = someTags;
     }
     
+    public int compareTo(Object anotherCommodity) throws ClassCastException {
+        if (!(anotherCommodity instanceof Commodity))
+            throw new ClassCastException("A Person object expected.");
+        int anotherCommodityPrice = ((Commodity) anotherCommodity).thePrice;  
+        return this.thePrice - anotherCommodityPrice;    
+    }
 }

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collections;
 
 /**
  *
@@ -63,7 +64,7 @@ public class TradeCycle {
                     stockPile++;
                     //alter the price downwards price
                     if(price > 0){
-                        price = (price - (price/stockPile));
+                        price = (price - ((price/stockPile)/2));
                     }
                 }
                 //  write new stock and price to DB
@@ -87,33 +88,44 @@ public class TradeCycle {
                     }
                 }catch(SQLException ex){
                     System.out.println(ex);
-                } 
-		
+                } 		
 		//get each comodity
                     //include any of a higher tag
                 String commodityQuery = "select trade_matrix.commodity_name, trade_matrix.stock, prices.price from trade_matrix inner join prices on trade_matrix.commodity_name = prices.commodity and trade_matrix.market_name = prices.market where trade_matrix.commodity_name in (select commodity from commodities_tags where tag = '"+aTag.theName+"' and grade >= "+aTag.theGrade+") and trade_matrix.market_name = '"+aMarket.theName+"' order by price asc";
                 ResultSet commodityResults = NRFTW_Trade.dBQuery(commodityQuery);
-                try{
-                    ArrayList theConsumedCommodities = new ArrayList();
+                 ArrayList theConsumedCommodities = new ArrayList();
+                try{                   
                     while(commodityResults.next()){
                         String thisCommodityName = commodityResults.getString(1);
                         int thisCommodityStock = commodityResults.getInt(2);
                         int thisCommodityPrice = commodityResults.getInt(3);
                         Commodity thisCommodity = new Commodity(thisCommodityName,thisCommodityStock,thisCommodityPrice);
                         theConsumedCommodities.add(thisCommodity);
+                        Collections.sort(theConsumedCommodities);
+        		//rank by local price
                     }                                                                  
                 }catch(SQLException ex){
                     System.out.println(ex);
                 } 
-        		//rank by local price
-                	//loop until consumption rate is satisfied
-                            //for each commodity 
-                                //if commodity has stockpile
-                                    //..consume unit of that commodity
-                                //adjust price of commodity
-                            //add one to consumption rate satisfaction
-                            //to next commodity
-                    //close commodity loop 
+                //loop until consumption rate is satisfied
+                int fulfilledConsumption = 0;
+                while(fulfilledConsumption < consumptionRate){                	
+                    //get cheapest commodity
+                    Commodity forConsumption = (Commodity) theConsumedCommodities.get(0);
+                        //if commodity has stockpile
+                        if(forConsumption.theStockLevel > 0){
+                            //..consume unit of that commodity
+                            forConsumption.theStockLevel --;
+                            forConsumption.thePrice = (forConsumption.thePrice + ((forConsumption.thePrice/forConsumption.theStockLevel)/2));
+                            //adjust price of commodity
+                        }else{
+                            //adjust price of commodity by more
+                            forConsumption.thePrice = (forConsumption.thePrice + (forConsumption.thePrice/2));
+                        }
+                    //add one to consumption rate satisfaction
+                    fulfilledConsumption ++;
+                    // resort commodities\
+                }
             //close tag loop
             }
         //close market loop 
