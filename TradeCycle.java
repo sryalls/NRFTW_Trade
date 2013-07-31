@@ -132,21 +132,101 @@ public class TradeCycle {
         }
         //for each market
         for(Iterator<Market> aMarketItterator = theMarkets.iterator(); aMarketItterator.hasNext();){
+            Market aMarket = aMarketItterator.next();
             //for each comodity
+            for(Iterator<Commodity> aCommodityItterator = theCommodities.iterator(); aCommodityItterator.hasNext();){
+                Commodity theTradingCommodity = aCommodityItterator.next();
                 //trade loop (loop until no trade is made)
-                    //if stockpile <= 0 
+                boolean tradeHappens = true; 
+                while(tradeHappens = true){
+                    tradeHappens= false;
+                    //if stockpile <=0
+                    String stockpileQuery = "select stock from trade_matrix where market_name = '"+aMarket.theName+"'and commodity_name ='"+theTradingCommodity.theName+"'";
+                    ResultSet stockpileResults = NRFTW_Trade.dBQuery(stockpileQuery);
+                    int stockpile = 0;
+                    boolean commodityShortage = false;
+                    try{
+                        while(stockpileResults.next()){
+                            stockpile = stockpileResults.getInt(1);                        
+                        }
+                    }catch(SQLException ex){
+                        System.out.println(ex);
+                    }        
+                    if(stockpile <= 0){    
                         //mark commodity shortage
-			//find cheapest linked market
-			//if market has stock & transfer total < tranfer rate & linked price < local price
-                            //subtract 1 unit from linked market stockpile
-                            //adjust linked marked price up
-                            //add  1 unit to local stock pile	
-                            //adjust local price down
+                        commodityShortage = true;
+                    }
+                    //find cheapest linked market
+                    //get all linked markets
+                    Integer bestPrice = null;
+                    String bestMarket = "";
+                    Integer bestRouteID = null;
+                    ArrayList linkedRoutes = NRFTW_Trade.getTradeRoutesByStart(aMarket.theName);
+                    for(Iterator<TradeRoute> linkedRoutesIterator = linkedRoutes.iterator(); linkedRoutesIterator.hasNext();){                    
+                        //store cheapest price market;
+                        TradeRoute thisTR = linkedRoutesIterator.next();
+                        String linkedMarket = "";
+                        if(thisTR.startPoint!=aMarket.theName){
+                            linkedMarket = thisTR.startPoint;
+                        }else
+                            if(thisTR.endPoint!=aMarket.theName){
+                                linkedMarket = thisTR.endPoint;
+                        }                        
+                        Integer thisPrice = null;
+                        String priceQuery = "select price from prices where commodity = '"+theTradingCommodity.theName+"' and market = '"+linkedMarket+"'";
+                        ResultSet priceResult = NRFTW_Trade.dBQuery(priceQuery);
+                        try{
+                            while(priceResult.next()){
+                                thisPrice = priceResult.getInt(1);
+                            }
+                        }catch(SQLException ex){
+                            System.out.println(ex);
+                        }
+                        if(bestPrice == null){
+                            bestPrice = thisPrice;
+                            bestMarket = linkedMarket;
+                            bestRouteID = thisTR.id;
+                            
+                        }else
+                        if(thisPrice < bestPrice){
+                            bestPrice = thisPrice;
+                            bestMarket = linkedMarket;
+                            bestRouteID = thisTR.id;
+                        }
+                    }
+                    if(bestRouteID != null){
+                    int stock = 0;
+                    Integer transferRate = null;
+                    int localPrice = 0;
+                    String transferRateQuery = "select rate from route_capacity where commodity = '"+theTradingCommodity.theName+"' and route = '"+bestRouteID+"'";
+                    ResultSet tRateResult = NRFTW_Trade.dBQuery(transferRateQuery);
+                    try{
+                        while(tRateResult.next()){
+                            transferRate = tRateResult.getInt(1);
+                        }   
+                    }catch(SQLException ex){
+                         System.out.println(ex);
+                    }
+                    String stockQuery = "select stock from trade_matrix where commodity_name = '"+theTradingCommodity.theName+"'and market_name ='"+bestMarket+"'";
+                    ResultSet stockResult = NRFTW_Trade.dBQuery(stockQuery);
+                    try{
+                        while(stockResult.next()){
+                            stock =stockResult.getInt(1);
+                        }
+                    }catch(SQLException ex){
+                        System.out.println(ex);
+                    }
+                    //if market has stock & transfer total < tranfer rate & linked price < local price
+                        //subtract 1 unit from linked market stockpile
+                        //adjust linked marked price up
+                        //add  1 unit to local stock pile	
+                        //adjust local price down
+                    }
 		//Close trade loop
+                }
             //close comodity loop
+            }
         //close market loop
         }
     }
-    
-        
 }
