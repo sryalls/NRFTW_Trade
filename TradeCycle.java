@@ -109,22 +109,28 @@ public class TradeCycle {
                 } 
                 //loop until consumption rate is satisfied
                 int fulfilledConsumption = 0;
+                
                 while(fulfilledConsumption < consumptionRate){                	
                     //get cheapest commodity
-                    Commodity forConsumption = (Commodity) theConsumedCommodities.get(0);
-                        //if commodity has stockpile
-                        if(forConsumption.theStockLevel > 0){
-                            //..consume unit of that commodity
-                            forConsumption.theStockLevel --;
-                            forConsumption.thePrice = (forConsumption.thePrice + ((forConsumption.thePrice/forConsumption.theStockLevel)/2));
-                            //adjust price of commodity
-                        }else{
-                            //adjust price of commodity by more
-                            forConsumption.thePrice = (forConsumption.thePrice + (forConsumption.thePrice/2));
-                        }
-                    //add one to consumption rate satisfaction
-                    fulfilledConsumption ++;
-                    // resort commodities\
+                    if(theConsumedCommodities.size()>0){
+                        Commodity forConsumption = (Commodity) theConsumedCommodities.get(0);
+                            //if commodity has stockpile
+                            if(forConsumption.theStockLevel > 0){
+                                //..consume unit of that commodity
+                                if(forConsumption.thePrice == 0){
+                                    forConsumption.thePrice ++;
+                                }
+                                forConsumption.thePrice = (forConsumption.thePrice + ((forConsumption.thePrice/forConsumption.theStockLevel)/2));
+                                //adjust price of commodity
+                                forConsumption.theStockLevel --;
+                            }else{
+                                //adjust price of commodity by more
+                                forConsumption.thePrice = (forConsumption.thePrice + (forConsumption.thePrice/2));
+                            }
+                        //add one to consumption rate satisfaction
+                        fulfilledConsumption ++;
+                        // resort commodities\
+                    }
                 }
             //close tag loop
             }
