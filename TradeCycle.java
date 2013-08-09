@@ -162,16 +162,18 @@ public class TradeCycle {
                     String bestMarket = "";
                     Integer bestRouteID = null;
                     ArrayList linkedRoutes = NRFTW_Trade.getTradeRoutesByStart(aMarket.theName);
-                    for(Iterator<TradeRoute> linkedRoutesIterator = linkedRoutes.iterator(); linkedRoutesIterator.hasNext();){                    
+                    HashMap<String, Integer> totalSold = new HashMap<String, Integer>();                    
+                    for(Iterator<TradeRoute> linkedRoutesIterator = linkedRoutes.iterator(); linkedRoutesIterator.hasNext();){ 
                         //store cheapest price market;
                         TradeRoute thisTR = linkedRoutesIterator.next();
                         String linkedMarket = "";
-                        if(thisTR.startPoint!=aMarket.theName){
+                        if(!thisTR.startPoint.equals(aMarket.theName)){
                             linkedMarket = thisTR.startPoint;
                         }else
-                            if(thisTR.endPoint!=aMarket.theName){
+                            if(!thisTR.endPoint.equals(aMarket.theName)){
                                 linkedMarket = thisTR.endPoint;
-                        }                        
+                        }
+                        totalSold.put(linkedMarket,0);
                         Integer thisPrice = null;
                         String priceQuery = "select price from prices where commodity = '"+theTradingCommodity.theName+"' and market = '"+linkedMarket+"'";
                         ResultSet priceResult = NRFTW_Trade.dBQuery(priceQuery);
@@ -195,32 +197,63 @@ public class TradeCycle {
                         }
                     }
                     if(bestRouteID != null){
-                    int stock = 0;
-                    Integer transferRate = null;
-                    int localPrice = 0;
-                    String transferRateQuery = "select rate from route_capacity where commodity = '"+theTradingCommodity.theName+"' and route = '"+bestRouteID+"'";
-                    ResultSet tRateResult = NRFTW_Trade.dBQuery(transferRateQuery);
-                    try{
-                        while(tRateResult.next()){
-                            transferRate = tRateResult.getInt(1);
-                        }   
-                    }catch(SQLException ex){
-                         System.out.println(ex);
-                    }
-                    String stockQuery = "select stock from trade_matrix where commodity_name = '"+theTradingCommodity.theName+"'and market_name ='"+bestMarket+"'";
-                    ResultSet stockResult = NRFTW_Trade.dBQuery(stockQuery);
-                    try{
-                        while(stockResult.next()){
-                            stock =stockResult.getInt(1);
+                        int stock = 0;
+                        Integer transferRate = null;
+                        int localPrice = 0;
+                        String transferRateQuery = "select rate from route_capacity where commodity = '"+theTradingCommodity.theName+"' and route = '"+bestRouteID+"'";
+                        ResultSet tRateResult = NRFTW_Trade.dBQuery(transferRateQuery);
+                        try{
+                            while(tRateResult.next()){
+                                transferRate = tRateResult.getInt(1);
+                            }   
+                        }catch(SQLException ex){
+                             System.out.println(ex);
                         }
-                    }catch(SQLException ex){
-                        System.out.println(ex);
-                    }
-                    //if market has stock & transfer total < tranfer rate & linked price < local price
-                        //subtract 1 unit from linked market stockpile
-                        //adjust linked marked price up
-                        //add  1 unit to local stock pile	
-                        //adjust local price down
+                        String stockQuery = "select stock from trade_matrix where commodity_name = '"+theTradingCommodity.theName+"'and market_name ='"+bestMarket+"'";
+                        ResultSet stockResult = NRFTW_Trade.dBQuery(stockQuery);
+                        try{
+                            while(stockResult.next()){
+                                stock =stockResult.getInt(1);
+                            }
+                        }catch(SQLException ex){
+                            System.out.println(ex);
+                        }
+                        int thisTotalSold = totalSold.get(bestMarket);
+                        //if market has stock & transfer total < tranfer rate & linked price < local price
+                        if(stock > 0 && transferRate >= thisTotalSold && bestPrice < localPrice){
+                            int localStock = 0;
+                            String localStockQuery = "select stock from trade_matrix where commodity_name = '"+theTradingCommodity.theName+"'and market_name ='"+aMarket.theName+"'";
+                            ResultSet localStockResult = NRFTW_Trade.dBQuery(localStockQuery);
+                            try{
+                                while(localStockResult.next()){
+                                    localStock =stockResult.getInt(1);
+                                }
+                            }catch(SQLException ex){
+                                System.out.println(ex);
+                            }                          
+                            totalSold.put(bestMarket,thisTotalSold+1);
+                            tradeHappens = true;
+                            //subtract 1 unit from linked market stockpile
+                            String linkedStockDownQuery = "update trade_matrix set stock = "+(stock - 1)+" commodity_name = '"+theTradingCommodity.theName+"'and market_name ='"+bestMarket+"'";
+                            NRFTW_Trade.dBUpdate(linkedStockDownQuery);
+                            //adjust linked marked price up
+                            int newLinkedPrice = bestPrice + ((bestPrice/stock)/2);
+                            String linkedPriceUpQuery = "update prices set price = "+newLinkedPrice+" where market = '"+bestMarket+"' and commodity = '"+theTradingCommodity.theName+"'";
+                            NRFTW_Trade.dBUpdate(linkedPriceUpQuery);
+                            //add  1 unit to local stock pile
+                            String localStockUpQuery = "update trade_matrix set stock = "+(localStock+1)+" commodity_name = '"+theTradingCommodity.theName+"'and market_name ='"+aMarket.theName+"'";
+                            NRFTW_Trade.dBUpdate(linkedStockDownQuery);
+                            int newLocalPrice = 0;
+                            if(localStock >= 0){
+                                newLocalPrice = (localPrice - (localPrice/2));
+                            }else{
+                                newLocalPrice = (localPrice - ((localPrice/localStock)/2));
+                            }
+                            //adjust local price down
+                            String localPriceDownQuery = "update prices set price = "+newLocalPrice+" where market = '"+aMarket.theName+"' and commodity = '"+theTradingCommodity.theName+"'";;
+                            NRFTW_Trade.dBUpdate(localPriceDownQuery);
+                            //forConsumption.thePrice + ((forConsumption.thePrice/forConsumption.theStockLevel)/2
+                        }
                     }
 		//Close trade loop
                 }
